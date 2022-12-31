@@ -11,7 +11,10 @@ Reset
         sta COLUBK
         
         lda #$60
-        sta COLUPF
+        sta COLUP0
+        
+        ldx #$20
+        stx COLUP1
 StartOfFrame
 	; Start of vertical blanking.
         lda #0
@@ -33,59 +36,33 @@ StartOfFrame
         	sta WSYNC
         REPEND
         
+        ; ---------------------------
         ; 192 scanlines of picture.
-        REPEAT 15
-        	ldx #%10101111
-                stx PF0
-                ldx #%11010111
-                stx PF1
-               	ldx #%10101110
-                stx PF2
-                
-                SLEEP 13
-                ldx #0
-                stx PF0
-                
-                SLEEP 6
-                ldx #%00101101
-                stx PF1
-                
-                SLEEP 6
-               	ldx #%01111011
-                stx PF2
-        	stx WSYNC
-                
-                
-                ldx #%01011101
-                stx PF0
-                ldx #%01111011
-                stx PF1
-               	ldx #%11000110
-                stx PF2
-                
-                SLEEP 13
-                ldx #$4D
-                stx PF0
-                
-                SLEEP 6
-                ldx #%11001100
-                stx PF1
-                
-                SLEEP 6
-               	ldx #%11100101
-                stx PF2
-                
-        	stx WSYNC
+        ; ---------------------------
+        REPEAT 12
+        	sta WSYNC
         REPEND
         
         ldx #0
-        stx PF0
-        stx PF1
-        stx PF2
-        REPEAT 150
+        
+       	REPEAT 5
+        	lda PLAYER,X
+                sta GRP1
+                inx
+                
+                lda #0
         	sta WSYNC
         REPEND
-        ;---------------------------
+        
+        ldx #0
+        stx ENAM1
+        
+        REPEAT 175
+        	sta WSYNC
+        REPEND
+        ; ---------------------------
+        ; End of picture scanlines.
+        ;----------------------------
         
         ; End of screen entering blanking.
         lda #%01000010
@@ -98,19 +75,12 @@ StartOfFrame
         
         jmp StartOfFrame
         
-        ORG $FFF0
-
-THREE: 
-	.byte %11111111
+PLAYER:
+	.byte %00011000
+        .byte %00111100	
+        .byte %01111110
         .byte %11111111
-        .byte %00000111
-        .byte %00000111
-        .byte %11111111
-        .byte %11111111
-        .byte %00000111
-        .byte %00000111
-        .byte %11111111
-        .byte %11111111
+        .byte #0
 
         ORG $FFFA
         

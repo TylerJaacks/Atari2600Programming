@@ -10,17 +10,8 @@ Reset
 	lda #$40
         sta COLUBK
         
-        lda #$80
+        lda #$60
         sta COLUPF
-        
-        lda #$C0
-        sta COLUP0
-        
-        lda #$1E
-        sta COLUP1
-        
-	lda #%00010000
-        sta CTRLPF
 StartOfFrame
 	; Start of vertical blanking.
         lda #0
@@ -42,34 +33,59 @@ StartOfFrame
         	sta WSYNC
         REPEND
         
-        ldx #$FF
-        stx ENABL
-        ; stx GRP0
-	
-        ldy #0
-Main:
         ; 192 scanlines of picture.
-	sta WSYNC
-        lda THREE,Y
-        sta PF1
-        iny
-        cpy #11
-        bne Main
-        
-        lda #0
-        ; sta GRP0
-        sta ENABL
-        sta PF1
-        
-        REPEAT 2
-        	nop
+        REPEAT 15
+        	ldx #%10101111
+                stx PF0
+                ldx #%11010111
+                stx PF1
+               	ldx #%10101110
+                stx PF2
+                
+                SLEEP 13
+                ldx #0
+                stx PF0
+                
+                SLEEP 6
+                ldx #%00101101
+                stx PF1
+                
+                SLEEP 6
+               	ldx #%01111011
+                stx PF2
+        	stx WSYNC
+                
+                
+                ldx #%01011101
+                stx PF0
+                ldx #%01111011
+                stx PF1
+               	ldx #%11000110
+                stx PF2
+                
+                SLEEP 13
+                ldx #$4D
+                stx PF0
+                
+                SLEEP 6
+                ldx #%11001100
+                stx PF1
+                
+                SLEEP 6
+               	ldx #%11100101
+                stx PF2
+                
+        	stx WSYNC
         REPEND
         
-        stx RESP0
-        
-        REPEAT 181
+        ldx #0
+        stx PF0
+        stx PF1
+        stx PF2
+        REPEAT 150
         	sta WSYNC
         REPEND
+        ;---------------------------
         
         ; End of screen entering blanking.
         lda #%01000010

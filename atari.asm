@@ -7,15 +7,20 @@
         ORG $F000
         
 Reset
-	lda #$64
+	lda #$40
+        sta COLUBK
+        
+        lda #$80
         sta COLUPF
         
-        ldx #$30
-        stx COLUBK
+        lda #$C0
+        sta COLUP0
         
-        ldy #1
-        sty CTRLPF
-
+        lda #$1E
+        sta COLUP1
+        
+	lda #%00010000
+        sta CTRLPF
 StartOfFrame
 	; Start of vertical blanking.
         lda #0
@@ -37,58 +42,32 @@ StartOfFrame
         	sta WSYNC
         REPEND
         
+        ldx #$FF
+        stx ENABL
+        ; stx GRP0
+	
+        ldy #0
+Main:
         ; 192 scanlines of picture.
-        REPEAT 2
-        	sta WSYNC
-        REPEND
+	sta WSYNC
+        lda THREE,Y
+        sta PF1
+        iny
+        cpy #11
+        bne Main
         
-        ldx #$40
-        stx COLUBK
-
-	ldx #%11101111
-        stx PF0
-        ldx #%11111111
-        stx PF1
-        stx PF2
-        
-        REPEAT 3
-        	sta WSYNC
-        REPEND
-        
-        ldx #$50
-        stx COLUBK
-        
-        ldx #%00101111
-        stx PF0
-        ldx #0
-        stx PF1
-        stx PF2
-        
-        REPEAT 182
-        	sta WSYNC
-        REPEND
-        
-        ldx #$60
-        stx COLUBK
-        
-        ldx #%11101111
-        stx PF0
-        
-        ldx #%11111111
-        stx PF1        
-        stx PF2
-        
-        REPEAT 3
-        	sta WSYNC
-        REPEND
-        
-       	ldx #0
-        stx PF0
-        stx PF1        
-        stx PF2
-        
+        lda #0
+        ; sta GRP0
+        sta ENABL
+        sta PF1
         
         REPEAT 2
+        	nop
+        REPEND
+        
+        stx RESP0
+        
+        REPEAT 181
         	sta WSYNC
         REPEND
         
@@ -103,6 +82,20 @@ StartOfFrame
         
         jmp StartOfFrame
         
+        ORG $FFF0
+
+THREE: 
+	.byte %11111111
+        .byte %11111111
+        .byte %00000111
+        .byte %00000111
+        .byte %11111111
+        .byte %11111111
+        .byte %00000111
+        .byte %00000111
+        .byte %11111111
+        .byte %11111111
+
         ORG $FFFA
         
         .word Reset ; NMI

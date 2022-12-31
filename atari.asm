@@ -1,4 +1,5 @@
 	processor 6502
+        
         include "vcs.h"
         include "macro.h"
         
@@ -8,27 +9,23 @@
 Reset
 	lda #$64
         sta COLUPF
+        
+        ldx #$30
+        stx COLUBK
+        
+        ldy #1
+        sty CTRLPF
+
 StartOfFrame
-	
-        ; Start of vertical blank processing.
+	; Start of vertical blanking.
         lda #0
         sta VBLANK
         
         lda #2
         sta VSYNC
         
-        ldy #%00000000
-        sty PF0
-        
-        ldy #%10010000
-        sty PF1
-        
-        ldy #%00010001
-        sty PF2
-        
-        ; 3 scanlines of VSYNCH signal.
+        ; 3 scanlines of VSYNCH singal.
         REPEAT 3
-        	; WSYNC basically waits till the next scanline.
         	sta WSYNC
         REPEND
         
@@ -41,21 +38,66 @@ StartOfFrame
         REPEND
         
         ; 192 scanlines of picture.
-        ldx #0
-        
-        REPEAT 192;
-        	inx
-                stx COLUBK
-                sta WSYNC
+        REPEAT 2
+        	sta WSYNC
         REPEND
         
+        ldx #$40
+        stx COLUBK
+
+	ldx #%11101111
+        stx PF0
+        ldx #%11111111
+        stx PF1
+        stx PF2
+        
+        REPEAT 3
+        	sta WSYNC
+        REPEND
+        
+        ldx #$50
+        stx COLUBK
+        
+        ldx #%00101111
+        stx PF0
+        ldx #0
+        stx PF1
+        stx PF2
+        
+        REPEAT 182
+        	sta WSYNC
+        REPEND
+        
+        ldx #$60
+        stx COLUBK
+        
+        ldx #%11101111
+        stx PF0
+        
+        ldx #%11111111
+        stx PF1        
+        stx PF2
+        
+        REPEAT 3
+        	sta WSYNC
+        REPEND
+        
+       	ldx #0
+        stx PF0
+        stx PF1        
+        stx PF2
+        
+        
+        REPEAT 2
+        	sta WSYNC
+        REPEND
+        
+        ; End of screen entering blanking.
         lda #%01000010
-        
-        ; End of screen blanking.
         sta VBLANK
-        
-        ; 30 scanlines of overscan.
-        REPEAT 30
+
+	; 30 scanlines of overscan.
+	REPEAT 30
         	sta WSYNC
         REPEND
         

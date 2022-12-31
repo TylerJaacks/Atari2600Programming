@@ -1,6 +1,15 @@
 # Atari 2600 Programming
 Just a repository for learning how to develop games for the Atari 2600 in 6502 assembly.
 
+# VIDEOS
+3. TIA and Specs
+5. Sprite and Playfield
+6. Playfield Part 2
+7. Playfield Part 3
+8. Playfield Asymmetrical Part 4
+9. Sprite
+
+
 # CREDITS
 1. 8 bit Game Development IDE - [8bitworkshop](https://8bitworkshop.com/)
 

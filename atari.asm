@@ -6,7 +6,8 @@
         ORG $F000
         
 Reset
-
+	lda #$64
+        sta COLUPF
 StartOfFrame
 	
         ; Start of vertical blank processing.
@@ -15,6 +16,15 @@ StartOfFrame
         
         lda #2
         sta VSYNC
+        
+        ldy #%00000000
+        sty PF0
+        
+        ldy #%10010000
+        sty PF1
+        
+        ldy #%00010001
+        sty PF2
         
         ; 3 scanlines of VSYNCH signal.
         REPEAT 3

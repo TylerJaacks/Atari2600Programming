@@ -13,6 +13,12 @@ Counter ds.bs 1,0
 Reset
 	lda #$40
         sta COLUBK
+        
+        ldx #$70
+        stx COLUP0
+        
+        ldx #%00000000
+        stx NUSIZ0
 StartOfFrame
 	; Start of vertical blanking.
         lda #0
@@ -37,7 +43,8 @@ StartOfFrame
 	sec
         sta WSYNC
         lda Counter
-        ldx #4
+        and #127
+        ldx #0
 DivideLoop:
 	sbc #15
         bcs DivideLoop
@@ -54,16 +61,22 @@ DivideLoop:
         sta WSYNC
         sta HMOVE
         
-        ldx #$FF
-        stx ENABL
-        sta WSYNC
-        lda #0
-        sta ENABL
+       	ldx #0
         
         ; ---------------------------
         ; 192 scanlines of picture.
-        ; ---------------------------       
-        REPEAT 189
+        ; ---------------------------
+        REPEAT 15
+        	lda PLAYER,X
+                sta GRP0
+                inx
+        	sta WSYNC
+        REPEND
+        
+        lda #0
+        sta GRP0
+               
+        REPEAT 174
         	sta WSYNC
         REPEND
         ; ---------------------------
@@ -83,14 +96,21 @@ DivideLoop:
         jmp StartOfFrame
         
 PLAYER:
-	.byte #%11100000
-        .byte #%01111000
+	.byte #%00111100
+        .byte #%11111111
+        .byte #%00100100
+        .byte #%00100100
+        .byte #%00111100
+        .byte #%00011000
+        .byte #%00011000
         .byte #%01111110
-        .byte #%01111111
-        .byte #%01111111
         .byte #%01111110
-        .byte #%01111000
-        .byte #%11110000
+        .byte #%11111111
+        .byte #%11111111
+        .byte #%11111111
+        .byte #%11111111
+        .byte #%01111110
+        .byte #%00111100
 
         ORG $FFFA
         

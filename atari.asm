@@ -10,13 +10,9 @@ Counter ds.bs 1,0
         
         SEG
         ORG $F000
-        
 Reset
 	lda #$40
         sta COLUBK
-        
-        lda #$60
-        sta COLUP0
 StartOfFrame
 	; Start of vertical blanking.
         lda #0
@@ -29,12 +25,6 @@ StartOfFrame
         REPEAT 3
         	sta WSYNC
         REPEND
-     	
-        ldy Counter
-Loop:
-	dey
-        bne Loop
-        sta RESP0
         
         lda #0
         sta VSYNC
@@ -44,32 +34,36 @@ Loop:
         	sta WSYNC
         REPEND
         
-        inc Counter
+	sec
+        sta WSYNC
+        lda Counter
+        ldx #4
+DivideLoop:
+	sbc #15
+        bcs DivideLoop
+        
+        eor #7
+        asl
+        asl
+        asl
+        asl
+        
+        sta.wx HMP0,X
+        sta RESP0,X
+        
+        sta WSYNC
+        sta HMOVE
+        
+        ldx #$FF
+        stx ENABL
+        sta WSYNC
+        lda #0
+        sta ENABL
         
         ; ---------------------------
         ; 192 scanlines of picture.
-        ; ---------------------------
-        
-        ; ---------------------------
-        ; Start of sprite rendering.
-        ; ---------------------------
-        ldx #0
-        
-        REPEAT 8
-        	lda PLAYER,X
-                sta GRP0
-                inx
-        	sta WSYNC
-        REPEND
-        
-        ldx #0
-        stx GRP0
-        
-        ; ---------------------------
-        ; End of sprite rendering.
-        ; ---------------------------
-        
-        REPEAT 186
+        ; ---------------------------       
+        REPEAT 189
         	sta WSYNC
         REPEND
         ; ---------------------------
@@ -79,12 +73,13 @@ Loop:
         ; End of screen entering blanking.
         lda #%01000010
         sta VBLANK
+        inc Counter
 
 	; 30 scanlines of overscan.
 	REPEAT 30
         	sta WSYNC
         REPEND
-        
+                
         jmp StartOfFrame
         
 PLAYER:

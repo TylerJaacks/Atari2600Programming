@@ -9,6 +9,8 @@ Just a repository for learning how to develop games for the Atari 2600 in 6502 a
 8. Playfield Asymmetrical Part 4
 9. Sprite
 10. Sprite Position
+10. Sprite Fine Position
+11. Sprite Number Size NUSIZO/NUSIZ1
 
 
 # CREDITS

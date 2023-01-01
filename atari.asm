@@ -3,6 +3,11 @@
         include "vcs.h"
         include "macro.h"
         
+        SEG.U var
+        ORG $80
+        
+Counter ds.bs 1,0
+        
         SEG
         ORG $F000
         
@@ -12,9 +17,6 @@ Reset
         
         lda #$60
         sta COLUP0
-        
-        ldx #$20
-        stx COLUP1
 StartOfFrame
 	; Start of vertical blanking.
         lda #0
@@ -27,6 +29,12 @@ StartOfFrame
         REPEAT 3
         	sta WSYNC
         REPEND
+     	
+        ldy Counter
+Loop:
+	dey
+        bne Loop
+        sta RESP0
         
         lda #0
         sta VSYNC
@@ -36,28 +44,32 @@ StartOfFrame
         	sta WSYNC
         REPEND
         
+        inc Counter
+        
         ; ---------------------------
         ; 192 scanlines of picture.
         ; ---------------------------
-        REPEAT 12
-        	sta WSYNC
-        REPEND
         
+        ; ---------------------------
+        ; Start of sprite rendering.
+        ; ---------------------------
         ldx #0
         
-       	REPEAT 5
+        REPEAT 8
         	lda PLAYER,X
-                sta GRP1
+                sta GRP0
                 inx
-                
-                lda #0
         	sta WSYNC
         REPEND
         
         ldx #0
-        stx ENAM1
+        stx GRP0
         
-        REPEAT 175
+        ; ---------------------------
+        ; End of sprite rendering.
+        ; ---------------------------
+        
+        REPEAT 186
         	sta WSYNC
         REPEND
         ; ---------------------------
@@ -76,11 +88,14 @@ StartOfFrame
         jmp StartOfFrame
         
 PLAYER:
-	.byte %00011000
-        .byte %00111100	
-        .byte %01111110
-        .byte %11111111
-        .byte #0
+	.byte #%11100000
+        .byte #%01111000
+        .byte #%01111110
+        .byte #%01111111
+        .byte #%01111111
+        .byte #%01111110
+        .byte #%01111000
+        .byte #%11110000
 
         ORG $FFFA
         

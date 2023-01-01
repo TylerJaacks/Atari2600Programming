@@ -8,6 +8,7 @@ Just a repository for learning how to develop games for the Atari 2600 in 6502 a
 7. Playfield Part 3
 8. Playfield Asymmetrical Part 4
 9. Sprite
+10. Sprite Position
 
 
 # CREDITS

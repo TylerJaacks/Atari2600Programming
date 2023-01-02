@@ -11,7 +11,7 @@ Just a repository for learning how to develop games for the Atari 2600 in 6502 a
 10. Sprite Position
 10. Sprite Fine Position
 11. Sprite Number Size NUSIZO/NUSIZ1
-
+12. Skip Draw (Incomplete)
 
 # CREDITS
 1. 8 bit Game Development IDE - [8bitworkshop](https://8bitworkshop.com/)

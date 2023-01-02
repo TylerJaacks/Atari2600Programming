@@ -3,11 +3,6 @@
         include "vcs.h"
         include "macro.h"
         
-        SEG.U var
-        ORG $80
-        
-Counter ds.bs 1,0
-        
         SEG
         ORG $F000
 Reset
@@ -17,8 +12,8 @@ Reset
         ldx #$70
         stx COLUP0
         
-        ldx #%00000000
-        stx NUSIZ0
+        ldx #%00000001
+        stx CTRLPF
 StartOfFrame
 	; Start of vertical blanking.
         lda #0
@@ -40,45 +35,23 @@ StartOfFrame
         	sta WSYNC
         REPEND
         
-	sec
-        sta WSYNC
-        lda Counter
-        and #127
-        ldx #0
-DivideLoop:
-	sbc #15
-        bcs DivideLoop
-        
-        eor #7
-        asl
-        asl
-        asl
-        asl
-        
-        sta.wx HMP0,X
-        sta RESP0,X
-        
-        sta WSYNC
-        sta HMOVE
-        
-       	ldx #0
-        
         ; ---------------------------
         ; 192 scanlines of picture.
         ; ---------------------------
-        REPEAT 15
-        	lda PLAYER,X
-                sta GRP0
-                inx
-        	sta WSYNC
-        REPEND
+        ldx #192
         
-        lda #0
-        sta GRP0
-               
-        REPEAT 174
-        	sta WSYNC
-        REPEND
+Main:
+	lda PFData0,X
+        sta PF0
+        lda PFData1,X
+        sta PF1
+        lda PFData2,X
+        sta PF2
+        sta WSYNC
+        dex
+        cpx #192
+        bne Main
+        
         ; ---------------------------
         ; End of picture scanlines.
         ;----------------------------
@@ -86,7 +59,6 @@ DivideLoop:
         ; End of screen entering blanking.
         lda #%01000010
         sta VBLANK
-        inc Counter
 
 	; 30 scanlines of overscan.
 	REPEAT 30
@@ -95,22 +67,84 @@ DivideLoop:
                 
         jmp StartOfFrame
         
-PLAYER:
-	.byte #%00111100
-        .byte #%11111111
+PLAYER1:
+	.byte #%01000001
+        .byte #%01000010
         .byte #%00100100
-        .byte #%00100100
-        .byte #%00111100
         .byte #%00011000
         .byte #%00011000
-        .byte #%01111110
-        .byte #%01111110
-        .byte #%11111111
-        .byte #%11111111
-        .byte #%11111111
-        .byte #%11111111
-        .byte #%01111110
-        .byte #%00111100
+        .byte #%00100100
+        .byte #%01000010
+        .byte #%10000001
+        
+PLAYER2:
+	.byte #%00011000
+        .byte #%00100100
+        .byte #010000010
+        .byte #%10000001
+        .byte #%10000001
+        .byte #%01000010
+        .byte #%00100100
+        .byte #%00011000
+PFData0:
+	.byte #%00010000
+        .byte #%00010000
+        .byte #%00010000
+        .byte #%00010000
+        .byte #%00010000
+        .byte #%00010000
+        .byte #%00010000
+        .byte #%00010000
+        .byte #%00010000
+        .byte #%00010000
+        .byte #%00010000
+        .byte #%00010000
+        .byte #%00010000
+        .byte #%00010000
+        .byte #%00010000
+       	.byte #%00010000
+PFData1:
+	.byte #%00010000
+        .byte #%00001000
+        .byte #%00001000
+        .byte #%00000000
+        .byte #%00001000
+        .byte #%00000100
+        .byte #%00000100
+	.byte #%00000010
+        .byte #%00000010
+        .byte #%00000001
+        .byte #%00000010
+        .byte #%00000001
+        .byte #%00000000
+        .byte #%00000000
+        .byte #%00000000
+        .byte #%00000000
+        .byte #%00000000
+        .byte #%00000000
+        .byte #%00000000
+        .byte #%00000000
+PFData2:
+	.byte #%10000000
+        .byte #%10000000
+        .byte #%10000001
+        .byte #%00000000
+        .byte #%00000000
+        .byte #%00000000
+        .byte #%10000000
+        .byte #%10000001
+        .byte #%10000011
+        .byte #%01000010
+        .byte #%01000010
+        .byte #%01000000
+        .byte #%00100000
+        .byte #%00000100
+        .byte #%10000110
+        .byte #%10000000
+        .byte #%00100000
+        .byte #%10011100
+        .byte #%10000100
+        .byte #%10000000
 
         ORG $FFFA
         

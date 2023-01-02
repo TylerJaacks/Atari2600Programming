@@ -11,6 +11,11 @@ Just a repository for learning how to develop games for the Atari 2600 in 6502 a
 10. Sprite Position
 10. Sprite Fine Position
 11. Sprite Number Size NUSIZO/NUSIZ1
+12. Skip Draw
+
+# INCOMPLETE FINISHED HERE
+
+https://youtu.be/63UZhafq7Nw?list=PLnjAJ75A-OrD_AT6lxOowmSAvmTDiCtTM&t=301
 
 
 # CREDITS
